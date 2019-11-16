@@ -90,6 +90,17 @@ namespace Bingo
                 Console.WriteLine("{0} not found", name);
         }
 
+        //Display all orphans in the dataset
+        private static void ShowOrphans()
+        {
+            foreach (GraphNode n in rg.nodes)
+            {
+                if (n.GetEdges("hasParent").Count == 0)
+                {
+                    Console.Write(n.Name + " ");
+                }
+            }
+        }
         // accept, parse, and execute user commands
         private static void CommandLoop()
         {
@@ -117,6 +128,10 @@ namespace Bingo
 
                 else if (command == "friends" && commandWords.Length > 1)
                     ShowFriends(commandWords[1]);
+
+                //show list of orphans
+                else if (command == "orphans")
+                    ShowOrphans();
 
                 // dump command prints out the graph
                 else if (command == "dump")
