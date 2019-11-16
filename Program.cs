@@ -27,7 +27,7 @@ namespace Bingo
                 input = input.Replace("\r", ";");                   // get rid of nasty carriage returns 
                 input = input.Replace("\n", ";");                   // get rid of nasty new lines
                 string[] inputItems = Regex.Split(input, @";\s*");  // parse out the relationships (separated by ;)
-                foreach (string item in inputItems) 
+                foreach (string item in inputItems)
                 {
                     if (item.Length > 2)                            // don't bother with empty relationships
                     {
@@ -39,7 +39,7 @@ namespace Bingo
                             numPeople++;
                         }
                         else
-                        {               
+                        {
                             rg.AddEdge(name, values[1], values[0]); // add relationship (name1, name2, relationship)
 
                             // handle symmetric relationships -- add the other way
@@ -78,15 +78,16 @@ namespace Bingo
             GraphNode n = rg.GetNode(name);
             if (n != null)
             {
-                Console.Write("{0}'s friends: ",name);
+                Console.Write("{0}'s friends: ", name);
                 List<GraphEdge> friendEdges = n.GetEdges("hasFriend");
-                foreach (GraphEdge e in friendEdges) {
-                    Console.Write("{0} ",e.To());
+                foreach (GraphEdge e in friendEdges)
+                {
+                    Console.Write("{0} ", e.To());
                 }
                 Console.WriteLine();
             }
             else
-                Console.WriteLine("{0} not found", name);     
+                Console.WriteLine("{0} not found", name);
         }
 
         // accept, parse, and execute user commands
