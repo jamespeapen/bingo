@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Bingo_v4
+namespace Bingo
 {
     /// <summary>
     /// Represents a node in a RelationshipGraph
