@@ -90,7 +90,7 @@ namespace Bingo
                 Console.WriteLine("{0} not found", name);
         }
 
-        //Display all orphans in the dataset
+        //Display all orphans in the dataset by checking each nodes edges for parent relationship
         private static void ShowOrphans()
         {
             foreach (GraphNode n in rg.nodes)
