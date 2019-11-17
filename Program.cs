@@ -105,7 +105,7 @@ namespace Bingo
         //Display all descendants of a node
         private static void ShowDescendants(string name)
         {
-            Queue<GraphNode> descendants = new Queue<GraphNode>();
+            Queue<GraphNode> descendants = new Queue<GraphNode>();  //queue of successive child nodes for BFS
             List<GraphNode> children = rg.GetChildNodes(name);
 
             foreach (GraphNode child in children)
@@ -113,9 +113,10 @@ namespace Bingo
             descendants.Enqueue(child);
             }
 
+            //while the queue is populated, dequeue a node and add its children to the queue
             while (descendants.Count != 0)
             {   
-                string descendant = descendants.Dequeue().Name;
+                string descendant = descendants.Dequeue().Name; 
                 Console.WriteLine(descendant);
                 children = rg.GetChildNodes(descendant);
                 foreach (GraphNode child in children)
