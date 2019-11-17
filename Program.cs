@@ -101,6 +101,29 @@ namespace Bingo
                 }
             }
         }
+
+        //Display all descendants of a node
+        private static void ShowDescendants(string name)
+        {
+            Queue<GraphNode> descendants = new Queue<GraphNode>();
+            List<GraphNode> children = rg.GetChildNodes(name);
+
+            foreach (GraphNode child in children)
+            {
+            descendants.Enqueue(child);
+            }
+
+            while (descendants.Count != 0)
+            {   
+                string descendant = descendants.Dequeue().Name;
+                Console.WriteLine(descendant);
+                children = rg.GetChildNodes(descendant);
+                foreach (GraphNode child in children)
+                {
+                    descendants.Enqueue(child);
+                }
+            }
+        }
         
         // accept, parse, and execute user commands
         private static void CommandLoop()
@@ -133,6 +156,10 @@ namespace Bingo
                 //show list of orphans
                 else if (command == "orphans")
                     ShowOrphans();
+
+                //show list of descendants
+                else if (command == "descendants" && commandWords.Length > 1)
+                    ShowDescendants(commandWords[1]);
 
                 // dump command prints out the graph
                 else if (command == "dump")
