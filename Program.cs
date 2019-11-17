@@ -101,6 +101,7 @@ namespace Bingo
                 }
             }
         }
+        
         // accept, parse, and execute user commands
         private static void CommandLoop()
         {
