@@ -106,12 +106,14 @@ namespace Bingo
         //Get all descendants of a node
         private static Dictionary<int, ArrayList> GetDescendants(string name)
         {
-            Queue<GraphNode> descendants = new Queue<GraphNode>();  //queue of successive child nodes for BFS
-            List<GraphNode> children = rg.GetChildNodes(name);
-            Dictionary<int, ArrayList> dict = new Dictionary<int, ArrayList>();
-            int generation = 0;
-            int child_count = children.Count;
-            dict.Add(generation, new ArrayList());
+            Queue<GraphNode> descendants = new Queue<GraphNode>();              // queue of successive child nodes for BFS
+            List<GraphNode> children = rg.GetChildNodes(name);                  // list of children for each node during search
+            Dictionary<int, ArrayList> dict = new Dictionary<int, ArrayList>(); // dictionary to store nodes by generation
+            int generation = 0;                                                 // count of generation                     
+            int child_count = children.Count;                                   // count of children in current generation
+
+            // first generation
+            dict.Add(generation, new ArrayList());                              
 
             foreach (GraphNode child in children)
             {
@@ -119,15 +121,15 @@ namespace Bingo
                 dict[generation].Add(child);
             }
 
-            //while the queue is populated, dequeue a node and add its children to the queue
-            int dequeue_count = 0;
-            int next_gen_count = 0;
+            //while the queue is populated, dequeue a node and add its children to the queue and the dictionary
+            int dequeue_count = 0;                                              // count of dequeues to know when to add a new generation
+            int next_gen_count = 0;                                             // count of children in the next generation
             while (descendants.Count != 0)
             {
                 dict.Add(generation + 1, new ArrayList());
                 dequeue_count = 0;
 
-                while (dequeue_count < child_count)
+                while (dequeue_count < child_count)                             // while the children of a generation are being added to the queue and dict
                 {
                     string descendant = descendants.Dequeue().Name;
                     children = rg.GetChildNodes(descendant);
@@ -139,9 +141,11 @@ namespace Bingo
                     }
                     dequeue_count += 1;
                 }
+
+                // one generation is done
                 generation += 1;
-                child_count = next_gen_count;
-                next_gen_count = 0;
+                child_count = next_gen_count;   // store the next generation child count in present generations child count
+                next_gen_count = 0;             // reset to count for the next generation
             }
             return dict;
         }
