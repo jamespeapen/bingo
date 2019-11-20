@@ -112,7 +112,7 @@ namespace Bingo
             int generation = 0;
             int child_count = children.Count;
             dict.Add(generation, new ArrayList());
-            
+
             foreach (GraphNode child in children)
             {
                 descendants.Enqueue(child);
@@ -126,24 +126,55 @@ namespace Bingo
             {
                 dict.Add(generation + 1, new ArrayList());
                 dequeue_count = 0;
-                
+
                 while (dequeue_count < child_count)
-                { 
+                {
                     string descendant = descendants.Dequeue().Name;
                     children = rg.GetChildNodes(descendant);
                     foreach (GraphNode child in children)
                     {
                         descendants.Enqueue(child);
-                        dict[generation+1].Add(child);
+                        dict[generation + 1].Add(child);
                         next_gen_count += 1;
-                    }     
-                    dequeue_count += 1;              
+                    }
+                    dequeue_count += 1;
                 }
                 generation += 1;
                 child_count = next_gen_count;
                 next_gen_count = 0;
             }
             return dict;
+        }
+
+        //show descendants from GetDescendants
+        private static void ShowDescendants(string name)
+        {
+            Dictionary<int, ArrayList> descendants = GetDescendants(name);
+
+            Console.Write("Children: ");
+            foreach (GraphNode child in descendants[0])
+                Console.Write(child.Name + " ");
+            Console.WriteLine();
+
+            Console.Write("Grandchildren: ");
+            foreach (GraphNode grandchild in descendants[1])
+                Console.Write(grandchild.Name + " ");
+
+            Console.WriteLine();
+
+            for (int i = 2; i < descendants.Count - 1; i++)
+            {
+                Console.Write("Great ");
+                for (int j = 2; j < i; j++)
+                    Console.Write("great ");
+
+                Console.Write("grandchildren: ");
+                foreach (GraphNode descendant in descendants[i])
+                {
+                    Console.Write(descendant.Name + " ");
+                }
+                Console.WriteLine();
+            }
         }
 
         // accept, parse, and execute user commands
