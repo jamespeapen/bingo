@@ -119,6 +119,7 @@ namespace Bingo
             {
                 descendants.Enqueue(child);
                 dict[generation].Add(child);
+                rg.GetNode(child.Name).Label = "visited";
             }
 
             //while the queue is populated, dequeue a node and add its children to the queue and the dictionary
@@ -131,12 +132,20 @@ namespace Bingo
 
                 while (dequeue_count < child_count)                             // while the children of a generation are being added to the queue and dict
                 {
-                    string descendant = descendants.Dequeue().Name;
-                    children = rg.GetChildNodes(descendant);
+                    GraphNode descendant = descendants.Dequeue();
+
+                    if (descendant.Label != "unvisited")
+                    {
+                        Console.WriteLine("Cycle detected!");
+                        dict.Clear();
+                        return dict;
+                    }
+                    children = rg.GetChildNodes(descendant.Name);
                     foreach (GraphNode child in children)
                     {
                         descendants.Enqueue(child);
                         dict[generation + 1].Add(child);
+                        rg.GetNode(child.Name).Label = "visited";
                         next_gen_count += 1;
                     }
                     dequeue_count += 1;
@@ -154,6 +163,8 @@ namespace Bingo
         private static void ShowDescendants(string name)
         {
             Dictionary<int, ArrayList> descendants = GetDescendants(name);
+            if (descendants.Count < 1)
+                return;
 
             Console.Write("Children: ");
             foreach (GraphNode child in descendants[0])
