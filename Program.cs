@@ -113,13 +113,12 @@ namespace Bingo
             int child_count = children.Count;                                   // count of children in current generation
 
             // first generation
-            dict.Add(generation, new ArrayList());                              
+            dict.Add(generation, new ArrayList());
 
             foreach (GraphNode child in children)
             {
                 descendants.Enqueue(child);
                 dict[generation].Add(child);
-                rg.GetNode(child.Name).Label = "visited";
             }
 
             //while the queue is populated, dequeue a node and add its children to the queue and the dictionary
@@ -133,22 +132,23 @@ namespace Bingo
                 while (dequeue_count < child_count)                             // while the children of a generation are being added to the queue and dict
                 {
                     GraphNode descendant = descendants.Dequeue();
-
-                    if (descendant.Label != "unvisited")
+                    Console.WriteLine(descendant.Label);
+                    if (descendant.Label != "Unvisited")
                     {
                         Console.WriteLine("Cycle detected!");
                         dict.Clear();
                         return dict;
                     }
+
                     children = rg.GetChildNodes(descendant.Name);
                     foreach (GraphNode child in children)
                     {
                         descendants.Enqueue(child);
                         dict[generation + 1].Add(child);
-                        rg.GetNode(child.Name).Label = "visited";
                         next_gen_count += 1;
                     }
                     dequeue_count += 1;
+                    descendant.Label = "visited";
                 }
 
                 // one generation is done
@@ -162,6 +162,12 @@ namespace Bingo
         //show descendants from GetDescendants
         private static void ShowDescendants(string name)
         {
+            if (rg.GetChildNodes(name).Count < 1)
+            {
+                Console.WriteLine(name + " has no descendants");
+                return;
+            }
+
             Dictionary<int, ArrayList> descendants = GetDescendants(name);
             if (descendants.Count < 1)
                 return;
