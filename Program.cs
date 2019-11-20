@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -102,30 +103,49 @@ namespace Bingo
             }
         }
 
-        //Display all descendants of a node
-        private static void ShowDescendants(string name)
+        //Get all descendants of a node
+        private static Dictionary<int, ArrayList> GetDescendants(string name)
         {
             Queue<GraphNode> descendants = new Queue<GraphNode>();  //queue of successive child nodes for BFS
             List<GraphNode> children = rg.GetChildNodes(name);
-
+            Dictionary<int, ArrayList> dict = new Dictionary<int, ArrayList>();
+            int generation = 0;
+            int child_count = children.Count;
+            dict.Add(generation, new ArrayList());
+            
             foreach (GraphNode child in children)
             {
-            descendants.Enqueue(child);
+                descendants.Enqueue(child);
+                dict[generation].Add(child);
             }
 
             //while the queue is populated, dequeue a node and add its children to the queue
+            int dequeue_count = 0;
+            int next_gen_count = 0;
             while (descendants.Count != 0)
-            {   
-                string descendant = descendants.Dequeue().Name; 
-                Console.WriteLine(descendant);
-                children = rg.GetChildNodes(descendant);
-                foreach (GraphNode child in children)
-                {
-                    descendants.Enqueue(child);
+            {
+                dict.Add(generation + 1, new ArrayList());
+                dequeue_count = 0;
+                
+                while (dequeue_count < child_count)
+                { 
+                    string descendant = descendants.Dequeue().Name;
+                    children = rg.GetChildNodes(descendant);
+                    foreach (GraphNode child in children)
+                    {
+                        descendants.Enqueue(child);
+                        dict[generation+1].Add(child);
+                        next_gen_count += 1;
+                    }     
+                    dequeue_count += 1;              
                 }
+                generation += 1;
+                child_count = next_gen_count;
+                next_gen_count = 0;
             }
+            return dict;
         }
-        
+
         // accept, parse, and execute user commands
         private static void CommandLoop()
         {
