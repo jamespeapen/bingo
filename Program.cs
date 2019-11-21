@@ -229,7 +229,7 @@ namespace Bingo
                 command = commandWords[0];
 
                 if (command == "exit")
-                    ;                                               // do nothing
+                    return;                                               // do nothing
 
                 // read a relationship graph from a file
                 else if (command == "read" && commandWords.Length > 1)
