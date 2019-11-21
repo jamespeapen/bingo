@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -101,6 +102,118 @@ namespace Bingo
                 }
             }
         }
+
+        //Get all descendants of a node
+        private static Dictionary<int, ArrayList> GetDescendants(string name)
+        {
+            Dictionary<int, ArrayList> dict = new Dictionary<int, ArrayList>(); // dictionary to store nodes by generation
+            Queue<GraphNode> descendants = new Queue<GraphNode>();              // queue of successive child nodes for BFS
+            List<GraphNode> children = rg.GetChildNodes(name);                  // list of children for each node during search
+            int generation = 0;                                                 // count of generation                     
+            int child_count = children.Count;                                   // count of children in current generation
+
+            // first generation
+            dict.Add(generation, new ArrayList());
+
+            foreach (GraphNode child in children)
+            {
+                descendants.Enqueue(child);
+                dict[generation].Add(child);
+            }
+
+            //while the queue is populated, dequeue a node and add its children to the queue and the dictionary
+            int dequeue_count = 0;                                              // count of dequeues to know when to add a new generation
+            int next_gen_count = 0;                                             // count of children in the next generation
+            while (descendants.Count != 0)
+            {
+                dict.Add(generation + 1, new ArrayList());
+                dequeue_count = 0;
+
+                while (dequeue_count < child_count)                             // while the children of a generation are being added to the queue and dict
+                {
+                    GraphNode descendant = descendants.Dequeue();
+                    
+                    // check for cycle
+                    if (descendant.Label != "Unvisited")
+                    {
+                        Console.WriteLine("Cycle detected!");
+                        dict.Clear();
+                        return dict;
+                    }
+                    // add children to the queue and dictionary if there are children for the dequeued node
+                    children = rg.GetChildNodes(descendant.Name);
+                    if (children.Count > 1)
+                    {
+                        foreach (GraphNode child in children)
+                        {
+                            descendants.Enqueue(child);
+                            dict[generation + 1].Add(child);
+                            next_gen_count += 1;
+                        }
+                    }
+                    dequeue_count += 1;
+                    descendant.Label = "visited";
+                }
+
+                // one generation is done
+                generation += 1;
+                if (next_gen_count < 1)           // return if there are no children in the next generation
+                {
+                    return dict;
+                }
+                child_count = next_gen_count;   // store the next generation child count in present generations child count
+                next_gen_count = 0;             // reset to count for the next generation
+            }
+            return dict;
+        }
+
+        //show descendants from GetDescendants
+        private static void ShowDescendants(string name)
+        {
+            if (rg.GetChildNodes(name).Count < 1)
+            {
+                Console.WriteLine(name + " has no descendants");
+                return;
+            }
+
+            Dictionary<int, ArrayList> descendants = GetDescendants(name);
+            if (descendants.Count < 1)
+                return;
+
+            Console.Write("Children: ");
+            foreach (GraphNode child in descendants[0])
+                Console.Write(child.Name + " ");
+            Console.WriteLine();
+
+            if (descendants[1].Count < 1)
+                return;
+            Console.Write("Grandchildren: ");
+            foreach (GraphNode grandchild in descendants[1])
+                Console.Write(grandchild.Name + " ");
+
+            Console.WriteLine();
+                        for (int i = 2; i < descendants.Count - 1; i++)
+            {
+                Console.Write("Great ");
+                for (int j = 2; j < i; j++)
+                    Console.Write("great ");
+
+                Console.Write("grandchildren: ");
+                foreach (GraphNode descendant in descendants[i])
+                {
+                    Console.Write(descendant.Name + " ");
+                }
+                Console.WriteLine();
+            }
+            reset_label();
+        }
+
+        private static void reset_label()
+        {
+            foreach (GraphNode person in rg.nodes)
+                person.Label = "Unvisited";
+        }
+
         // accept, parse, and execute user commands
         private static void CommandLoop()
         {
@@ -116,7 +229,7 @@ namespace Bingo
                 command = commandWords[0];
 
                 if (command == "exit")
-                    ;                                               // do nothing
+                    return;                                               // do nothing
 
                 // read a relationship graph from a file
                 else if (command == "read" && commandWords.Length > 1)
@@ -133,13 +246,17 @@ namespace Bingo
                 else if (command == "orphans")
                     ShowOrphans();
 
+                //show list of descendants
+                else if (command == "descendants" && commandWords.Length > 1)
+                    ShowDescendants(commandWords[1]);
+
                 // dump command prints out the graph
                 else if (command == "dump")
                     rg.Dump();
 
                 // illegal command
                 else
-                    Console.Write("\nLegal commands: read [filename], dump, show [personname],\n  friends [personname], exit\n");
+                    Console.Write("\nLegal commands: read [filename], dump, show [personname],\n  friends [personname], descendants [personname] exit\n");
             }
         }
 
