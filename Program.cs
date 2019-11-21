@@ -132,7 +132,7 @@ namespace Bingo
                 while (dequeue_count < child_count)                             // while the children of a generation are being added to the queue and dict
                 {
                     GraphNode descendant = descendants.Dequeue();
-                    
+
                     // check for cycle
                     if (descendant.Label != "Unvisited")
                     {
@@ -176,36 +176,74 @@ namespace Bingo
                 return;
             }
 
-            Dictionary<int, ArrayList> descendants = GetDescendants(name);
-            if (descendants.Count < 1)
-                return;
+            List<GraphNode> current_generation = new List<GraphNode>();
+            List<GraphNode> next_generation = new List<GraphNode>();
+            int generation_number = 1;
 
-            Console.Write("Children: ");
-            foreach (GraphNode child in descendants[0])
+            Console.WriteLine("Children: ");
+            current_generation = rg.GetChildNodes(name);
+            foreach (GraphNode child in current_generation)
+            {
                 Console.Write(child.Name + " ");
+                foreach (GraphNode grandchild in rg.GetChildNodes(child.Name))
+                {
+                    next_generation.Add(grandchild);
+                }
+            }
             Console.WriteLine();
-
-            if (descendants[1].Count < 1)
+            if (next_generation.Count < 1)
                 return;
-            Console.Write("Grandchildren: ");
-            foreach (GraphNode grandchild in descendants[1])
-                Console.Write(grandchild.Name + " ");
 
+            generation_number = 2;
+            current_generation.Clear();
+
+            foreach (GraphNode person in next_generation)
+                current_generation.Add(person);
+            next_generation.Clear();
+
+            Console.WriteLine("Grandchilren: ");
+            foreach (GraphNode grandchild in current_generation)
+            {
+                Console.Write(grandchild.Name + " ");
+                foreach (GraphNode greatgrandchild in rg.GetChildNodes(grandchild.Name))
+                {
+                    next_generation.Add(greatgrandchild);
+                }
+            }
             Console.WriteLine();
-                        for (int i = 2; i < descendants.Count - 1; i++)
+
+            if (next_generation.Count < 1)
+                return;
+
+            while (next_generation.Count > 1)
             {
                 Console.Write("Great ");
-                for (int j = 2; j < i; j++)
-                    Console.Write("great ");
+                generation_number++;
+                foreach (GraphNode person in next_generation)
+                    current_generation.Add(person);
+                next_generation.Clear();
 
-                Console.Write("grandchildren: ");
-                foreach (GraphNode descendant in descendants[i])
+                for (int i = 2; i < generation_number; i++)
                 {
-                    Console.Write(descendant.Name + " ");
+                    Console.Write("great ");
                 }
+
+                Console.WriteLine("grandchildren: ");
+
+                foreach (GraphNode greatgrandchild in current_generation)
+                {
+                    Console.Write(greatgrandchild.Name + " ");
+                    foreach (GraphNode nextgreatkid in rg.GetChildNodes(greatgrandchild.Name))
+                    {
+                        next_generation.Add(nextgreatkid);
+                    }
+                }
+                current_generation.Clear();
                 Console.WriteLine();
             }
+
             reset_label();
+            return;
         }
 
         private static void reset_label()
