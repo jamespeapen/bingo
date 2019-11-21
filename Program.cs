@@ -205,6 +205,13 @@ namespace Bingo
                 }
                 Console.WriteLine();
             }
+            reset_label();
+        }
+
+        private static void reset_label()
+        {
+            foreach (GraphNode person in rg.nodes)
+                person.Label = "Unvisited";
         }
 
         // accept, parse, and execute user commands
