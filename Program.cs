@@ -106,9 +106,9 @@ namespace Bingo
         //Get all descendants of a node
         private static Dictionary<int, ArrayList> GetDescendants(string name)
         {
+            Dictionary<int, ArrayList> dict = new Dictionary<int, ArrayList>(); // dictionary to store nodes by generation
             Queue<GraphNode> descendants = new Queue<GraphNode>();              // queue of successive child nodes for BFS
             List<GraphNode> children = rg.GetChildNodes(name);                  // list of children for each node during search
-            Dictionary<int, ArrayList> dict = new Dictionary<int, ArrayList>(); // dictionary to store nodes by generation
             int generation = 0;                                                 // count of generation                     
             int child_count = children.Count;                                   // count of children in current generation
 
@@ -132,20 +132,24 @@ namespace Bingo
                 while (dequeue_count < child_count)                             // while the children of a generation are being added to the queue and dict
                 {
                     GraphNode descendant = descendants.Dequeue();
-                    Console.WriteLine(descendant.Label);
+                    
+                    // check for cycle
                     if (descendant.Label != "Unvisited")
                     {
                         Console.WriteLine("Cycle detected!");
                         dict.Clear();
                         return dict;
                     }
-
+                    // add children to the queue and dictionary if there are children for the dequeued node
                     children = rg.GetChildNodes(descendant.Name);
-                    foreach (GraphNode child in children)
+                    if (children.Count > 1)
                     {
-                        descendants.Enqueue(child);
-                        dict[generation + 1].Add(child);
-                        next_gen_count += 1;
+                        foreach (GraphNode child in children)
+                        {
+                            descendants.Enqueue(child);
+                            dict[generation + 1].Add(child);
+                            next_gen_count += 1;
+                        }
                     }
                     dequeue_count += 1;
                     descendant.Label = "visited";
@@ -153,6 +157,10 @@ namespace Bingo
 
                 // one generation is done
                 generation += 1;
+                if (next_gen_count < 1)           // return if there are no children in the next generation
+                {
+                    return dict;
+                }
                 child_count = next_gen_count;   // store the next generation child count in present generations child count
                 next_gen_count = 0;             // reset to count for the next generation
             }
@@ -177,13 +185,14 @@ namespace Bingo
                 Console.Write(child.Name + " ");
             Console.WriteLine();
 
+            if (descendants[1].Count < 1)
+                return;
             Console.Write("Grandchildren: ");
             foreach (GraphNode grandchild in descendants[1])
                 Console.Write(grandchild.Name + " ");
 
             Console.WriteLine();
-
-            for (int i = 2; i < descendants.Count - 1; i++)
+                        for (int i = 2; i < descendants.Count - 1; i++)
             {
                 Console.Write("Great ");
                 for (int j = 2; j < i; j++)
@@ -240,7 +249,7 @@ namespace Bingo
 
                 // illegal command
                 else
-                    Console.Write("\nLegal commands: read [filename], dump, show [personname],\n  friends [personname], exit\n");
+                    Console.Write("\nLegal commands: read [filename], dump, show [personname],\n  friends [personname], descendants [personname] exit\n");
             }
         }
 
