@@ -214,7 +214,7 @@ namespace Bingo
 
             if (next_generation.Count < 1)
                 return;
-
+            current_generation.Clear();
             while (next_generation.Count > 1)
             {
                 Console.Write("Great ");
