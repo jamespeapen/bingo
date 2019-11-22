@@ -100,6 +100,8 @@ namespace Bingo
                 {
                     Console.Write(n.Name + " ");
                 }
+
+                else Console.WriteLine("No orphans found");
             }
         }
 
