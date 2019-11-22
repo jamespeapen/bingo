@@ -58,6 +58,20 @@ namespace Bingo
                 return null;
         }
 
+        // Get parent node
+        public List<GraphNode> GetParentNodes(string name)
+        {
+            GraphNode child = GetNode(name);
+            List<GraphEdge> parentEdges = child.GetEdges("hasParent");
+
+            List<GraphNode> parentNodes = new List<GraphNode>();
+
+            foreach (GraphEdge parentEdge in parentEdges)
+            {
+                parentNodes.Add(GetNode(parentEdge.To()));
+            } 
+            return parentNodes;
+        }
         // Get Child Nodes
         public List<GraphNode> GetChildNodes(string name)
         {
