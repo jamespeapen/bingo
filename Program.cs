@@ -142,7 +142,7 @@ namespace Bingo
                     }
                     // add children to the queue and dictionary if there are children for the dequeued node
                     children = rg.GetChildNodes(descendant.Name);
-                    if (children.Count > 1)
+                    if (children.Count > 0)
                     {
                         foreach (GraphNode child in children)
                         {
