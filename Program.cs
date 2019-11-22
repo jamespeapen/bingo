@@ -111,6 +111,7 @@ namespace Bingo
                 Console.WriteLine(name + " not found");
                 return;
             }
+            
             // check if there are descendants
             if (rg.GetChildNodes(name).Count < 1)
             {
