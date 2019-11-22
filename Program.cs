@@ -117,6 +117,7 @@ namespace Bingo
             List<GraphNode> next_generation = new List<GraphNode>();                    //list of nodes of children of current generation being printed
             int generation_number = 1;                                                  //count of generations
 
+            // print children and get grandchildren
             Console.WriteLine("*Children: ");
             current_generation = rg.GetChildNodes(name);
             foreach (GraphNode child in current_generation)
@@ -131,6 +132,8 @@ namespace Bingo
                         Console.WriteLine("Cycle detected!");
                         return;
                     }
+                    
+                    // add to grandchild list
                     next_generation.Add(grandchild);
                     grandchild.Label = "visited";
                 }
@@ -142,8 +145,9 @@ namespace Bingo
                 return;
 
             generation_number = 2;
-            current_generation.Clear();
 
+            // move nodes from next_geneation into current_generation
+            current_generation.Clear();
             copy_list(current_generation, next_generation);
             next_generation.Clear();
 
