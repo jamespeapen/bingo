@@ -103,111 +103,128 @@ namespace Bingo
             }
         }
 
-        //Get all descendants of a node
-        private static Dictionary<int, ArrayList> GetDescendants(string name)
-        {
-            Dictionary<int, ArrayList> dict = new Dictionary<int, ArrayList>(); // dictionary to store nodes by generation
-            Queue<GraphNode> descendants = new Queue<GraphNode>();              // queue of successive child nodes for BFS
-            List<GraphNode> children = rg.GetChildNodes(name);                  // list of children for each node during search
-            int generation = 0;                                                 // count of generation                     
-            int child_count = children.Count;                                   // count of children in current generation
-
-            // first generation
-            dict.Add(generation, new ArrayList());
-
-            foreach (GraphNode child in children)
-            {
-                descendants.Enqueue(child);
-                dict[generation].Add(child);
-            }
-
-            //while the queue is populated, dequeue a node and add its children to the queue and the dictionary
-            int dequeue_count = 0;                                              // count of dequeues to know when to add a new generation
-            int next_gen_count = 0;                                             // count of children in the next generation
-            while (descendants.Count != 0)
-            {
-                dict.Add(generation + 1, new ArrayList());
-                dequeue_count = 0;
-
-                while (dequeue_count < child_count)                             // while the children of a generation are being added to the queue and dict
-                {
-                    GraphNode descendant = descendants.Dequeue();
-                    
-                    // check for cycle
-                    if (descendant.Label != "Unvisited")
-                    {
-                        Console.WriteLine("Cycle detected!");
-                        dict.Clear();
-                        return dict;
-                    }
-                    // add children to the queue and dictionary if there are children for the dequeued node
-                    children = rg.GetChildNodes(descendant.Name);
-                    if (children.Count > 1)
-                    {
-                        foreach (GraphNode child in children)
-                        {
-                            descendants.Enqueue(child);
-                            dict[generation + 1].Add(child);
-                            next_gen_count += 1;
-                        }
-                    }
-                    dequeue_count += 1;
-                    descendant.Label = "visited";
-                }
-
-                // one generation is done
-                generation += 1;
-                if (next_gen_count < 1)           // return if there are no children in the next generation
-                {
-                    return dict;
-                }
-                child_count = next_gen_count;   // store the next generation child count in present generations child count
-                next_gen_count = 0;             // reset to count for the next generation
-            }
-            return dict;
-        }
-
-        //show descendants from GetDescendants
+        //show descendants
         private static void ShowDescendants(string name)
         {
+            // check if there are descendants
             if (rg.GetChildNodes(name).Count < 1)
             {
                 Console.WriteLine(name + " has no descendants");
                 return;
             }
 
-            Dictionary<int, ArrayList> descendants = GetDescendants(name);
-            if (descendants.Count < 1)
-                return;
+            List<GraphNode> current_generation = new List<GraphNode>();                 //list of nodes in current generation being printed
+            List<GraphNode> next_generation = new List<GraphNode>();                    //list of nodes of children of current generation being printed
+            int generation_number = 1;                                                  //count of generations
 
-            Console.Write("Children: ");
-            foreach (GraphNode child in descendants[0])
-                Console.Write(child.Name + " ");
-            Console.WriteLine();
-
-            if (descendants[1].Count < 1)
-                return;
-            Console.Write("Grandchildren: ");
-            foreach (GraphNode grandchild in descendants[1])
-                Console.Write(grandchild.Name + " ");
-
-            Console.WriteLine();
-                        for (int i = 2; i < descendants.Count - 1; i++)
+            // print children and get grandchildren
+            Console.WriteLine("*Children: ");
+            current_generation = rg.GetChildNodes(name);
+            foreach (GraphNode child in current_generation)
             {
-                Console.Write("Great ");
-                for (int j = 2; j < i; j++)
-                    Console.Write("great ");
-
-                Console.Write("grandchildren: ");
-                foreach (GraphNode descendant in descendants[i])
+                Console.Write(child.Name + " ");
+                child.Label = "visited";
+                foreach (GraphNode grandchild in rg.GetChildNodes(child.Name))
                 {
-                    Console.Write(descendant.Name + " ");
+                    // check for cycle
+                    if (node_visited(grandchild))
+                    {
+                        Console.WriteLine("Cycle detected!");
+                        return;
+                    }
+                    
+                    // add to grandchild list
+                    next_generation.Add(grandchild);
+                    grandchild.Label = "visited";
                 }
+            }
+            Console.WriteLine();
+
+            //return if there are no more children
+            if (next_generation.Count < 1)
+                return;
+
+            generation_number = 2;
+
+            // move nodes from next_geneation into current_generation
+            current_generation.Clear();
+            copy_list(current_generation, next_generation);
+            next_generation.Clear();
+
+            //print grandchildren and get greatgrandchildren
+            Console.WriteLine("*Grandchilren: ");
+            foreach (GraphNode grandchild in current_generation)
+            {
+                Console.Write(grandchild.Name + " ");
+                foreach (GraphNode greatgrandchild in rg.GetChildNodes(grandchild.Name))
+                {
+                    if (node_visited(greatgrandchild))
+                    {
+                        Console.WriteLine("Cycle detected!");
+                        return;
+                    }
+                    next_generation.Add(greatgrandchild);
+                    greatgrandchild.Label = "visited";
+                }
+            }
+            Console.WriteLine();
+
+            if (next_generation.Count < 1)
+                return;
+
+            current_generation.Clear();
+
+            //while there are kids in each next generation, print them and get their kids
+            while (next_generation.Count > 1)
+            {
+                Console.Write("*Great ");
+                generation_number++;
+                copy_list(current_generation, next_generation);
+                next_generation.Clear();
+
+                // print the required number of 'greats'
+                for (int i = 2; i < generation_number; i++)
+                {
+                    Console.Write("great ");
+                }
+
+                Console.WriteLine("grandchildren: ");
+
+                foreach (GraphNode greatgrandchild in current_generation)
+                {
+                    Console.Write(greatgrandchild.Name + " ");
+                    foreach (GraphNode nextgreatkid in rg.GetChildNodes(greatgrandchild.Name))
+                    {
+                        if (node_visited(nextgreatkid))
+                        {
+                            Console.WriteLine("Cycle detected!");
+                            return;
+                        }
+                        next_generation.Add(nextgreatkid);
+                    }
+                }
+                current_generation.Clear();
                 Console.WriteLine();
             }
+
             reset_label();
+            return;
         }
 
+        // copy function to copy next generation list into current generation
+        private static void copy_list(List<GraphNode> current, List<GraphNode> next)
+        {
+            foreach (GraphNode person in next)
+                current.Add(person);
+        }
+
+        // check if a node has been visited
+        private static bool node_visited(GraphNode node)
+        {
+            return node.Label == "visited";
+        }
+
+        // reset visit labels to unvisited after a descendant search
         private static void reset_label()
         {
             foreach (GraphNode person in rg.nodes)
