@@ -103,7 +103,7 @@ namespace Bingo
             }
         }
 
-        //show descendants from GetDescendants
+        //show descendants
         private static void ShowDescendants(string name)
         {
             // check if there are descendants
