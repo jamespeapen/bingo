@@ -109,15 +109,17 @@ namespace Bingo
             GraphNode child = rg.GetNode(name);
             child.Label = "visited";
             List<GraphNode> parents = rg.GetParentNodes(name);
-            List<GraphNode> siblings = new List<GraphNode>();
+
+            Console.WriteLine("Siblings of " + child.Name);
             foreach (GraphNode parent in parents)
             {
                 foreach (GraphNode sibling in rg.GetChildNodes(parent.Name))
                 {
-                   siblings.Add(sibling); 
+                    if (sibling != child)
+                        Console.Write(sibling.Name);
                 }
             }
-            siblings.Remove(child);
+
         }
 
         //show descendants
@@ -294,7 +296,7 @@ namespace Bingo
 
                 else if (command == "siblings" && commandWords.Length > 1)
                     ShowSiblings(commandWords[1]);
-                    
+
                 // dump command prints out the graph
                 else if (command == "dump")
                     rg.Dump();
