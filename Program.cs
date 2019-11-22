@@ -94,15 +94,18 @@ namespace Bingo
         //Display all orphans in the dataset by checking each nodes edges for parent relationship
         private static void ShowOrphans()
         {
+            bool no_orphans = true;
             foreach (GraphNode n in rg.nodes)
             {
                 if (n.GetEdges("hasParent").Count == 0)
                 {
                     Console.Write(n.Name + " ");
+                    no_orphans = false;
                 }
 
-                else Console.WriteLine("No orphans found");
             }
+            if (no_orphans)
+                Console.WriteLine("No orphans found");
         }
 
         //show siblings
