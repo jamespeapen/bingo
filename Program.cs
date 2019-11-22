@@ -107,18 +107,27 @@ namespace Bingo
         private static void ShowSiblings(string name)
         {
             GraphNode child = rg.GetNode(name);
-            child.Label = "visited";
             List<GraphNode> parents = rg.GetParentNodes(name);
+            List<GraphNode> siblings = new List<GraphNode>();
 
-            Console.WriteLine("Siblings of " + child.Name + ": ");
+            //check each parent if there is more than one
             foreach (GraphNode parent in parents)
             {
                 foreach (GraphNode sibling in rg.GetChildNodes(parent.Name))
                 {
                     if (sibling != child)
-                        Console.Write(sibling.Name + " ");
+                        siblings.Add(sibling);
                 }
             }
+            if (siblings.Count < 1)
+            {
+                Console.WriteLine(name + " has no siblings");
+                return;
+            }
+
+            Console.WriteLine("Siblings of " + child.Name + ": ");
+            foreach (GraphNode sibling in siblings)
+                Console.Write(sibling.Name + " ");
 
         }
 
