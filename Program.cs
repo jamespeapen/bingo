@@ -107,8 +107,8 @@ namespace Bingo
         private static void ShowSiblings(string name)
         {
             GraphNode child = rg.GetNode(name);
-            GraphNode parent = rg.getParent(name);
-            List<GraphNode> siblings = rg.GetChildNodes(parent.Name);
+            List<GraphNode> parent = rg.GetParentNodes(name);
+            
             siblings.Remove(child); 
         }
 
