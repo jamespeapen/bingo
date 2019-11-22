@@ -292,6 +292,9 @@ namespace Bingo
                 else if (command == "descendants" && commandWords.Length > 1)
                     ShowDescendants(commandWords[1]);
 
+                else if (command == "siblings" && commandWords.Length > 1)
+                    ShowSiblings(commandWords[1]);
+                    
                 // dump command prints out the graph
                 else if (command == "dump")
                     rg.Dump();
