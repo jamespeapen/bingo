@@ -73,6 +73,14 @@ namespace Bingo
                 Console.WriteLine("{0} not found", name);
         }
 
+        //Bingo to show a relationship between two people
+        private static void Bingo(string person_1, string person_2)
+        {
+            GraphNode person1 = rg.GetNode(person_1);
+            GraphNode person2 = rg.GetNode(person_2);
+
+            
+        }
         // Show a person's friends
         private static void ShowFriends(string name)
         {
@@ -314,6 +322,9 @@ namespace Bingo
                 else if (command == "siblings" && commandWords.Length > 1)
                     ShowSiblings(commandWords[1]);
 
+                //find bingo
+                else if (command == "bingo" && commandWords.Length > 1)
+                    Bingo(commandWords[1], commandWords[2]);
                 // dump command prints out the graph
                 else if (command == "dump")
                     rg.Dump();
