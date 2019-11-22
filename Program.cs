@@ -129,6 +129,7 @@ namespace Bingo
             foreach (GraphNode sibling in siblings)
                 Console.Write(sibling.Name + " ");
 
+            Console.WriteLine();
         }
 
         //show descendants
