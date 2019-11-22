@@ -106,6 +106,11 @@ namespace Bingo
         //show descendants
         private static void ShowDescendants(string name)
         {
+            if (rg.GetNode(name) == null)
+            {
+                Console.WriteLine(name + " not found");
+                return;
+            }
             // check if there are descendants
             if (rg.GetChildNodes(name).Count < 1)
             {
@@ -132,7 +137,7 @@ namespace Bingo
                         Console.WriteLine("Cycle detected!");
                         return;
                     }
-                    
+
                     // add to grandchild list
                     next_generation.Add(grandchild);
                     grandchild.Label = "visited";
@@ -177,7 +182,7 @@ namespace Bingo
 
             //while there are kids in each next generation, print them and get their kids
             while (next_generation.Count > 1)
-            {   
+            {
                 Console.WriteLine();
                 Console.Write("*Great ");
                 generation_number++;
