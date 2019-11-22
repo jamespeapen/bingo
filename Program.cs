@@ -120,10 +120,12 @@ namespace Bingo
             {
                 foreach (GraphNode sibling in rg.GetChildNodes(parent.Name))
                 {
-                    if (sibling != child)
+                    if (sibling != child)           //exclude queried child
                         siblings.Add(sibling);
                 }
             }
+
+            //no siblings
             if (siblings.Count < 1)
             {
                 Console.WriteLine(name + " has no siblings");
@@ -186,7 +188,7 @@ namespace Bingo
 
             generation_number = 2;
 
-            // move nodes from next_geneation into current_generation
+            // move nodes from next_generation into current_generation
             current_generation.Clear();
             copy_list(current_generation, next_generation);
             next_generation.Clear();
