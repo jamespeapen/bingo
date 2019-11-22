@@ -110,7 +110,7 @@ namespace Bingo
             child.Label = "visited";
             List<GraphNode> parents = rg.GetParentNodes(name);
 
-            Console.WriteLine("Siblings of " + child.Name);
+            Console.WriteLine("Siblings of " + child.Name + ": ");
             foreach (GraphNode parent in parents)
             {
                 foreach (GraphNode sibling in rg.GetChildNodes(parent.Name))
