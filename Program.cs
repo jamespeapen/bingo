@@ -185,9 +185,16 @@ namespace Bingo
             foreach (GraphNode child in current_generation)
             {
                 Console.Write(child.Name + " ");
+                child.Label = "visited";
                 foreach (GraphNode grandchild in rg.GetChildNodes(child.Name))
                 {
+                    if (node_visited(grandchild))
+                    {
+                        Console.WriteLine("Cycle detected!");
+                        return;
+                    }
                     next_generation.Add(grandchild);
+                    grandchild.Label = "visited";
                 }
             }
             Console.WriteLine();
@@ -207,7 +214,13 @@ namespace Bingo
                 Console.Write(grandchild.Name + " ");
                 foreach (GraphNode greatgrandchild in rg.GetChildNodes(grandchild.Name))
                 {
+                    if (node_visited(greatgrandchild))
+                    {
+                        Console.WriteLine("Cycle detected!");
+                        return;
+                    }
                     next_generation.Add(greatgrandchild);
+                    greatgrandchild.Label = "visited";
                 }
             }
             Console.WriteLine();
@@ -235,6 +248,11 @@ namespace Bingo
                     Console.Write(greatgrandchild.Name + " ");
                     foreach (GraphNode nextgreatkid in rg.GetChildNodes(greatgrandchild.Name))
                     {
+                        if (node_visited(nextgreatkid))
+                        {
+                            Console.WriteLine("Cycle detected!");
+                            return;
+                        }
                         next_generation.Add(nextgreatkid);
                     }
                 }
@@ -246,6 +264,15 @@ namespace Bingo
             return;
         }
 
+        private static void copy_list(List<GraphNode> current, List<GraphNode>next)
+        {
+            foreach (GraphNode person in next)
+                current.Add(person);
+        }
+        private static bool node_visited(GraphNode node)
+        {
+            return node.Label == "visited";
+        }
         private static void reset_label()
         {
             foreach (GraphNode person in rg.nodes)
