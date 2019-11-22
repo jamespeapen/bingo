@@ -103,6 +103,15 @@ namespace Bingo
             }
         }
 
+        //show siblings
+        private static void ShowSiblings(string name)
+        {
+            GraphNode child = rg.GetNode(name);
+            GraphNode parent = rg.getParent(name);
+            List<GraphNode> siblings = rg.GetChildNodes(parent.Name);
+            siblings.Remove(child); 
+        }
+
         //show descendants
         private static void ShowDescendants(string name)
         {
@@ -111,7 +120,7 @@ namespace Bingo
                 Console.WriteLine(name + " not found");
                 return;
             }
-            
+
             // check if there are descendants
             if (rg.GetChildNodes(name).Count < 1)
             {
