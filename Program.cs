@@ -152,6 +152,7 @@ namespace Bingo
             next_generation.Clear();
 
             //print grandchildren and get greatgrandchildren
+            Console.WriteLine();
             Console.WriteLine("*Grandchilren: ");
             foreach (GraphNode grandchild in current_generation)
             {
@@ -176,7 +177,8 @@ namespace Bingo
 
             //while there are kids in each next generation, print them and get their kids
             while (next_generation.Count > 1)
-            {
+            {   
+                Console.WriteLine();
                 Console.Write("*Great ");
                 generation_number++;
                 copy_list(current_generation, next_generation);
