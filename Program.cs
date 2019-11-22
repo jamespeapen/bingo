@@ -132,7 +132,7 @@ namespace Bingo
                 while (dequeue_count < child_count)                             // while the children of a generation are being added to the queue and dict
                 {
                     GraphNode descendant = descendants.Dequeue();
-                    
+
                     // check for cycle
                     if (descendant.Label != "Unvisited")
                     {
@@ -192,7 +192,7 @@ namespace Bingo
                 Console.Write(grandchild.Name + " ");
 
             Console.WriteLine();
-                        for (int i = 2; i < descendants.Count - 1; i++)
+            for (int i = 2; i < descendants.Count - 1; i++)
             {
                 Console.Write("Great ");
                 for (int j = 2; j < i; j++)
