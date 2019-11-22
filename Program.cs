@@ -116,7 +116,7 @@ namespace Bingo
                 foreach (GraphNode sibling in rg.GetChildNodes(parent.Name))
                 {
                     if (sibling != child)
-                        Console.Write(sibling.Name);
+                        Console.Write(sibling.Name + " ");
                 }
             }
 
