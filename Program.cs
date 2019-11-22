@@ -111,7 +111,7 @@ namespace Bingo
                 Console.WriteLine(name + " not found");
                 return;
             }
-            
+
             // check if there are descendants
             if (rg.GetChildNodes(name).Count < 1)
             {
@@ -124,7 +124,7 @@ namespace Bingo
             int generation_number = 1;                                                  //count of generations
 
             // print children and get grandchildren
-            Console.WriteLine("*Children: ");
+            Console.WriteLine("*children: ");
             current_generation = rg.GetChildNodes(name);
             foreach (GraphNode child in current_generation)
             {
@@ -150,50 +150,24 @@ namespace Bingo
             if (next_generation.Count < 1)
                 return;
 
-            generation_number = 2;
-
-            // move nodes from next_geneation into current_generation
-            current_generation.Clear();
-            copy_list(current_generation, next_generation);
-            next_generation.Clear();
-
-            //print grandchildren and get greatgrandchildren
-            Console.WriteLine();
-            Console.WriteLine("*Grandchilren: ");
-            foreach (GraphNode grandchild in current_generation)
-            {
-                Console.Write(grandchild.Name + " ");
-                foreach (GraphNode greatgrandchild in rg.GetChildNodes(grandchild.Name))
-                {
-                    if (node_visited(greatgrandchild))
-                    {
-                        Console.WriteLine("Cycle detected!");
-                        return;
-                    }
-                    next_generation.Add(greatgrandchild);
-                    greatgrandchild.Label = "visited";
-                }
-            }
-            Console.WriteLine();
-
-            if (next_generation.Count < 1)
-                return;
-
-            current_generation.Clear();
-
             //while there are kids in each next generation, print them and get their kids
-            while (next_generation.Count > 1)
+            while (next_generation.Count > 0)
             {
-                Console.WriteLine();
-                Console.Write("*Great ");
                 generation_number++;
+
+                current_generation.Clear();
                 copy_list(current_generation, next_generation);
                 next_generation.Clear();
 
-                // print the required number of 'greats'
-                for (int i = 2; i < generation_number; i++)
+                Console.WriteLine();
+                if (generation_number > 2)
                 {
-                    Console.Write("great ");
+                    Console.Write("*great ");
+                    // print the required number of 'greats'
+                    for (int i = 2; i < generation_number; i++)
+                    {
+                        Console.Write("great ");
+                    }
                 }
 
                 Console.WriteLine("grandchildren: ");
@@ -211,7 +185,6 @@ namespace Bingo
                         next_generation.Add(nextgreatkid);
                     }
                 }
-                current_generation.Clear();
                 Console.WriteLine();
             }
 
