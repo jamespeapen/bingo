@@ -77,10 +77,81 @@ namespace Bingo
         private static void Bingo(string person_1, string person_2)
         {
             GraphNode person1 = rg.GetNode(person_1);
+            person1.Label = "visited";                       //set as visited so cycles are not allowed
             GraphNode person2 = rg.GetNode(person_2);
-
+            Dictionary<GraphNode, GraphNode> dict = new Dictionary<GraphNode, GraphNode>();     //dict to store each nodes predecessor
+            Dictionary<GraphNode, GraphEdge> dict2 = new Dictionary<GraphNode, GraphEdge>();
+            Queue<GraphEdge> queue = new Queue<GraphEdge>();                                    //queue for BFS
             List<GraphEdge> first = person1.GetEdges();
+
+            //check for immediate bingo
+            foreach (GraphEdge e in first)
+            {
+                if (rg.GetNode(e.To()) == person2)
+                {
+                    Console.WriteLine(e.ToString());
+                    return;
+                }
+                queue.Enqueue(e);
+                rg.GetNode(e.To()).Label = "visited";
+                dict.Add(rg.GetNode(e.To()), person1);
+                dict2.Add(rg.GetNode(e.To()), e);
+            }
+
+            bool broken = false;                                        //check if person2 is found and inner loop is broken
+            while (queue.Count > 0)
+            {
+                GraphEdge next_edge = queue.Dequeue();
+                GraphNode next_person = rg.GetNode(next_edge.To());
+                foreach (GraphEdge e in next_person.GetEdges())
+                {
+                    if (rg.GetNode(e.To()) == person2)
+                    {
+                        dict.Add(person2, next_person);
+                        dict2.Add(person2, e);
+                        broken = true;
+                        break;
+                    }
+                    else
+                    {
+                        if (rg.GetNode(e.To()).Label != "visited")
+                        {
+                            queue.Enqueue(e);
+                            dict.Add(rg.GetNode(e.To()), next_person);
+                            dict2.Add(rg.GetNode(e.To()), e);
+                            rg.GetNode(e.To()).Label = "visited";
+                        }
+                    }
+                }
+                if (broken)
+                    break;
+            }
+
+            //traceback to person1
+            GraphNode parent = dict[person2];
+            GraphNode child = person2;
+
+            //get non-symmetric relationships
+            if (child.GetRelationship(parent.Name) == null)
+                Console.WriteLine(parent.GetRelationship(child.Name));
+            else
+                Console.WriteLine(child.GetRelationship(parent.Name).ToString());
+
+            while (parent != person1)
+            {
+                child = parent;
+                parent = dict[parent];
+
+                //get non-symmetric relationships
+                if (child.GetRelationship(parent.Name) == null)
+                    Console.WriteLine(parent.GetRelationship(child.Name));
+                else
+                    Console.WriteLine(child.GetRelationship(parent.Name).ToString());
+            }
+
+            reset_label();
         }
+
         // Show a person's friends
         private static void ShowFriends(string name)
         {
@@ -209,7 +280,7 @@ namespace Bingo
                 }
                 Console.WriteLine();
             }
-            
+
             //reset visited labels to unvisited
             reset_label();
             return;
@@ -283,7 +354,7 @@ namespace Bingo
 
                 // illegal command
                 else
-                    Console.Write("\nLegal commands: read [filename], dump, show [personname],\n  friends [personname], descendants [personname] exit\n");
+                    Console.Write("\nLegal commands: read [filename], dump, show [personname],\n  friends [personname], descendants [personname], bingo[personname personname] exit\n");
             }
         }
 
