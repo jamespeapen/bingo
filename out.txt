@@ -1,0 +1,13 @@
+Welcome to Harry's Dutch Bingo Parlor!
+
+Enter a command: 
+
+Legal commands: read [filename], dump, show [personname],
+  friends [personname], descendants [personname] exit
+
+Enter a command: 
+
+Legal commands: read [filename], dump, show [personname],
+  friends [personname], descendants [personname] exit
+
+Enter a command: 

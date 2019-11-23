@@ -13,7 +13,7 @@ namespace Bingo
         public string Name { get; private set; }
 
         public string Label { get; set; }
-        
+
         public List<GraphEdge> incidentEdges { get; private set; }
 
         // constructor
@@ -24,14 +24,14 @@ namespace Bingo
             incidentEdges = new List<GraphEdge>();
         }
 
-	// Add an edge (but don't add duplicate edges)
+        // Add an edge (but don't add duplicate edges)
         public void AddIncidentEdge(GraphEdge e)
         {
-	    foreach (GraphEdge edge in incidentEdges)
-	    {
-	        if (edge.ToString() == e.ToString()) 
-		    return;
-	    }
+            foreach (GraphEdge edge in incidentEdges)
+            {
+                if (edge.ToString() == e.ToString())
+                    return;
+            }
             incidentEdges.Add(e);
         }
 
@@ -51,6 +51,17 @@ namespace Bingo
             return list;
         }
 
+        //return a GraphEdge for the relationship between two people
+        public GraphEdge GetRelationship(string person)
+        {
+            foreach (GraphEdge edge in incidentEdges)
+            {
+                if (edge.To() == person)
+                    return edge;
+            }
+            return null;
+        }
+
         // return text form of node, including outgoing edges
         public override string ToString()
         {
@@ -61,6 +72,6 @@ namespace Bingo
                 result = result + "  " + e.ToString() + "\n";
             }
             return result;
-        } 
+        }
     }
 }
