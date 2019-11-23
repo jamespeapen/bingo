@@ -106,6 +106,7 @@ namespace Bingo
         //show descendants
         private static void ShowDescendants(string name)
         {
+            //check if node exists
             if (rg.GetNode(name) == null)
             {
                 Console.WriteLine(name + " not found");
@@ -120,35 +121,11 @@ namespace Bingo
             }
 
             List<GraphNode> current_generation = new List<GraphNode>();                 //list of nodes in current generation being printed
-            List<GraphNode> next_generation = new List<GraphNode>();                    //list of nodes of children of current generation being printed
+            List<GraphNode> next_generation = rg.GetChildNodes(name);
             int generation_number = 1;                                                  //count of generations
 
             // print children and get grandchildren
             Console.WriteLine("*children: ");
-            current_generation = rg.GetChildNodes(name);
-            foreach (GraphNode child in current_generation)
-            {
-                Console.Write(child.Name + " ");
-                child.Label = "visited";
-                foreach (GraphNode grandchild in rg.GetChildNodes(child.Name))
-                {
-                    // check for cycle
-                    if (node_visited(grandchild))
-                    {
-                        Console.WriteLine("Cycle detected!");
-                        return;
-                    }
-
-                    // add to grandchild list
-                    next_generation.Add(grandchild);
-                    grandchild.Label = "visited";
-                }
-            }
-            Console.WriteLine();
-
-            //return if there are no more children
-            if (next_generation.Count < 1)
-                return;
 
             //while there are kids in each next generation, print them and get their kids
             while (next_generation.Count > 0)
@@ -159,35 +136,37 @@ namespace Bingo
                 copy_list(current_generation, next_generation);
                 next_generation.Clear();
 
-                Console.WriteLine();
+
                 if (generation_number > 2)
                 {
+                    Console.WriteLine();
                     Console.Write("*great ");
                     // print the required number of 'greats'
                     for (int i = 2; i < generation_number; i++)
                     {
                         Console.Write("great ");
                     }
+                    Console.WriteLine("grandchildren: ");
                 }
 
-                Console.WriteLine("grandchildren: ");
-
-                foreach (GraphNode greatgrandchild in current_generation)
+                foreach (GraphNode child in current_generation)
                 {
-                    Console.Write(greatgrandchild.Name + " ");
-                    foreach (GraphNode nextgreatkid in rg.GetChildNodes(greatgrandchild.Name))
+                    Console.Write(child.Name + " ");
+                    child.Label = "visited";
+                    foreach (GraphNode next_kid in rg.GetChildNodes(child.Name))
                     {
-                        if (node_visited(nextgreatkid))
+                        if (node_visited(next_kid))
                         {
                             Console.WriteLine("Cycle detected!");
                             return;
                         }
-                        next_generation.Add(nextgreatkid);
+                        next_generation.Add(next_kid);
                     }
                 }
                 Console.WriteLine();
             }
-
+            
+            //reset visited labels to unvisited
             reset_label();
             return;
         }
