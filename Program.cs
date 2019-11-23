@@ -79,7 +79,7 @@ namespace Bingo
             GraphNode person1 = rg.GetNode(person_1);
             GraphNode person2 = rg.GetNode(person_2);
 
-            
+            List<GraphEdge> first = person1.GetEdges();
         }
         // Show a person's friends
         private static void ShowFriends(string name)
