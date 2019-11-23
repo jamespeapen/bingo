@@ -27,6 +27,11 @@ namespace Bingo
             return toNode.Name;
         }
 
+        public string From()
+        {
+            return fromNode.Name;
+        }
+
         // return string form of edge
         public override string ToString() 
         {
